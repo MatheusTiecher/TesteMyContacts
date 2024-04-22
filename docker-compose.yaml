@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  nginx:
+    container_name: test_my_contacts_nginx
+    build: docker-images/nginx
+    working_dir: /var/www/html
+    command: nginx -g "daemon off;"
+    ports:
+      - "8039:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - php
+  php:
+    container_name: test_my_contacts_laravel
+    build: docker-images/php
+    working_dir: /var/www/html
+    command: php-fpm
+    ports:
+      - 9000
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+  db:
+    container_name: test_my_contacts_db
+    image: postgres:15
+    ports:
+      - "5439:5432"
+    environment:
+      POSTGRES_DB: test_my_contacts
+      POSTGRES_USER: test_my_contacts
+      POSTGRES_PASSWORD: test_my_contacts
+    volumes:
+      - db_data_test_my_contacts:/var/lib/postgresql/data
+    
+volumes:
+  db_data_test_my_contacts:
