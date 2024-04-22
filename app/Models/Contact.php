@@ -49,10 +49,10 @@ class Contact extends Model
     public function getTypeDescriptionAttribute()
     {
         $types = [
-            0 => 'Pessoal',
-            1 => 'Profissional',
-            2 => 'Familiar',
-            3 => 'Outros',
+            1 => 'Pessoal',
+            2 => 'Profissional',
+            3 => 'Familiar',
+            4 => 'Outros',
         ];
 
         return $types[$this->type];
