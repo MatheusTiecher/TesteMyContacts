@@ -122,40 +122,37 @@
         </div>
     </div>
 
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
     <script
-        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_GEOCODING_API_KEY') }}&callback=initMap&v=weekly&libraries=marker"
+        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_GEOCODING_API_KEY') }}&callback=initMap&libraries=places"
         defer></script>
-
-
     <script>
-        // Inicialize o mapa
-        async function initMap(coordenadas) {
-            // The location of Uluru
-            const position = {
-                lat: -25.344,
-                lng: 131.036
-            };
+        let map;
+        let Marker;
 
-            // Initialize the map
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 4,
-                center: position,
-                mapId: "DEMO_MAP_ID", // Map ID is required for advanced markers.
+        async function initMap() {
+            //@ts-ignore
+            const {
+                Map,
+                Marker: MarkerClass
+            } = google.maps;
+
+            map = new Map(document.getElementById('map'), {
+                center: {
+                    lat: -25.4441627,
+                    lng: -49.2556925
+                },
+                zoom: 12,
             });
 
-            // Add the advanced marker, positioned at Uluru
-            const marker = new google.maps.marker.AdvancedMarkerElement({
-                map,
-                position: position,
-                title: 'Uluru',
-            });
+            Marker = MarkerClass; // Atribui a referência globalmente
         }
-    </script>
 
-    <script>
         // quando o documento estiver pronto carrerga a lista
         document.addEventListener('DOMContentLoaded', function() {
             listar();
+            initMap();
         });
 
         // sempre que o campo de pesquisa e o tipo mudar, chama a funcao listar
@@ -196,16 +193,22 @@
                     // chama a funcao atualizarLista
                     atualizarLista(data.data);
 
-                    // passa as coordenadas para o mapa
-                    var coordenadas = data.data.map(function(contact) {
+                    // Recupera as coordenadas dos contatos
+                    let coordenadas = data.data.map(contact => {
                         return {
                             lat: parseFloat(contact.latitude),
-                            lng: parseFloat(contact.longitude)
+                            lng: parseFloat(contact.longitude),
                         };
                     });
 
-                    // chama a funcao initMap
-                    initMap(coordenadas);
+                    // Adiciona os marcadores ao mapa
+                    coordenadas.forEach(coordinate => {
+                        new Marker({
+                            position: coordinate,
+                            map: map,
+                        });
+                    });
+
                 })
                 .catch(error => {
                     console.error('Erro ao listar contatos:', error);
