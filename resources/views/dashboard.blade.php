@@ -228,6 +228,9 @@
                 item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
                 item.innerHTML = contact.name;
 
+                // adiciona o endereco do item pegando de full_address e adiciona o tipo de contato pegando de type_description e adiciona o cpf e telefone
+                item.innerHTML += ' - ' + contact.full_address + ' - ' + contact.type_description + ' - ' + contact.cpf + ' - ' + contact.cellphone;
+
                 // Adicionar botões de ação
                 var btnGroup = document.createElement('div');
                 btnGroup.classList.add('btn-group');
