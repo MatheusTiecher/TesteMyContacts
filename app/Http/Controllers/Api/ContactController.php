@@ -93,7 +93,7 @@ class ContactController extends Controller
     public function update(Request $request, Contact $contact)
     {
         try {
-            $validador = validator()->make($request->all(), (new UpdateContactRequest())->rules());
+            $validador = validator()->make($request->all(), (new UpdateContactRequest($contact->id))->rules());
             if ($validador->fails()) {
                 return $this->createResponseBadRequest('Erro formulário inválido!', $validador->errors(), 422);
             }
@@ -105,7 +105,15 @@ class ContactController extends Controller
 
             $contact->update($validador->validated());
 
-            return $this->createResponseSuccess([], 204, 'Contato atualizado com sucesso');
+            // atualiza a latitude e longitude ao contato
+            $coodinate = $this->locationService->getCoordinatesByAddress($contact);
+            $contact->update([
+                'latitude' => $coodinate['latitude'],
+                'longitude' => $coodinate['longitude']
+            ]);
+
+            $contact = $contact->refresh();
+            return $this->createResponseSuccess($contact, 201, 'Contato atualizado com sucesso');
         } catch (\Exception $e) {
             return $this->createResponseInternalError($e);
         }

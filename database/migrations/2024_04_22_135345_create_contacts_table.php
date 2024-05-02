@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('type')->default(4);
             $table->string('cellphone')->nullable();
             $table->string('address', 255)->nullable();
-            $table->integer('number')->nullable();
+            $table->string('number')->nullable();
             $table->string('district', 255)->nullable();
             $table->char('zipcode', 8)->nullable();
             $table->text('complement')->nullable();

@@ -6,6 +6,13 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateContactRequest extends FormRequest
 {
+    private int $id;
+
+    public function __construct(int $id)
+    {
+        $this->id = $id;
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,7 +30,7 @@ class UpdateContactRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'cpf' => 'required|cpf|unique:contacts,cpf,' . $this->contact->id,
+            'cpf' => 'required|cpf|unique:contacts,cpf,' . $this->id,
             'cellphone' => 'required',
             'type' => 'required|integer|in:1,2,3,4',
             'address' => 'required',
