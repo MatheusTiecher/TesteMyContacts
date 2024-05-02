@@ -50,18 +50,15 @@ class ContactController extends Controller
     {
         try {
             $validador = validator()->make($request->all(), (new StoreContactRequest())->rules());
-
             if ($validador->fails()) {
-                return $this->createResponseBadRequest('Erro de validação', $validador->errors(), 422);
+                return $this->createResponseBadRequest('Erro formulário inválido!', $validador->errors(), 422);
             }
 
             $user = Auth::user();
-
             $newContact = $user->contacts()->create($validador->validated());
 
             // adiciona latitude e longitude ao contato
             $coodinate = $this->locationService->getCoordinatesByAddress($newContact);
-           
             $newContact->update([
                 'latitude' => $coodinate['latitude'],
                 'longitude' => $coodinate['longitude']
@@ -80,7 +77,6 @@ class ContactController extends Controller
     {
         try {
             $user = Auth::user();
-
             if ($contact->user_id !== $user->id) {
                 throw new \Exception('Você não tem permissão para acessar este contato', 403);
             }
@@ -97,22 +93,19 @@ class ContactController extends Controller
     public function update(Request $request, Contact $contact)
     {
         try {
-
             $validador = validator()->make($request->all(), (new UpdateContactRequest())->rules());
-
             if ($validador->fails()) {
-                return $this->createResponseBadRequest('Erro de validação', $validador->errors(), 422);
+                return $this->createResponseBadRequest('Erro formulário inválido!', $validador->errors(), 422);
             }
 
             $user = Auth::user();
-
             if ($contact->user_id !== $user->id) {
                 throw new \Exception('Você não tem permissão para acessar este contato', 403);
             }
 
             $contact->update($validador->validated());
 
-            return $this->createResponseSuccess(null, 204, 'Contato atualizado com sucesso');
+            return $this->createResponseSuccess([], 204, 'Contato atualizado com sucesso');
         } catch (\Exception $e) {
             return $this->createResponseInternalError($e);
         }
@@ -132,7 +125,7 @@ class ContactController extends Controller
 
             $contact->delete();
 
-            return $this->createResponseSuccess(null, 204, 'Contato deletado com sucesso');
+            return $this->createResponseSuccess([], 204, 'Contato deletado com sucesso');
         } catch (\Exception $e) {
             return $this->createResponseInternalError($e);
         }

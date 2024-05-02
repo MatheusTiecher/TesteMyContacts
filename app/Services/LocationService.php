@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Contact;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Geocoder\Facades\Geocoder;
@@ -47,7 +48,15 @@ class LocationService
         return $zipCode;
     }
 
-    public function getCoordinatesByAddress($contact)
+    /**
+     * Retorna as coordenadas de um endereço
+     * 
+     * @param Contact $contact
+     * @return array
+     * 
+     * @throws \Exception
+     */
+    public function getCoordinatesByAddress(Contact $contact)
     {
         $address = "{$contact->address}, {$contact->number} - {$contact->district}, {$contact->city->description} - {$contact->city->uf}, {$contact->zipcode}";
         $geocoder = $this->getLatitudeAndLongitude($address);
@@ -58,6 +67,15 @@ class LocationService
         return $newData;
     }
 
+    /**
+     * Consulta as coordenadas de um endereço no geocoder
+     * 
+     * @param string $address
+     * 
+     * @return array
+     * 
+     * @throws \Exception
+     */
     public function getLatitudeAndLongitude($address)
     {
         $geocoder = Geocoder::getCoordinatesForAddress($address);

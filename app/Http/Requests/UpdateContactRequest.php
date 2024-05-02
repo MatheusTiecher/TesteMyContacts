@@ -34,4 +34,17 @@ class UpdateContactRequest extends FormRequest
             'city_id' => 'required|exists:cities,id',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'cpf' => preg_replace('/[^0-9]/', '', $this->cpf),
+            'zipcode' => preg_replace('/[^0-9]/', '', $this->zipcode),
+        ]);
+    }
 }

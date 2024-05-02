@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// api rest - create contact
+// api rest - contacts
 Route::apiResource('/api/contacts', ContactController::class)->middleware(['auth', 'verified']);
 
 // api get viacep
